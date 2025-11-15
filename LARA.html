@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lara — Agente de RRHH (Embed)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="dark light">
+  <style>
+    /* ========== Variables ========== */
+    :root{
+      --bg-1: #081026;        /* deep navy */
+      --bg-2: #07122a;        /* darker */
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.04);
+      --glass-3: rgba(255,255,255,0.12);
+      --muted: rgba(255,255,255,0.78);
+      --accent-1: #7c3aed;
+      --accent-2: #06b6d4;
+      --accent-grad: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --glass-border: rgba(255,255,255,0.08);
+      --glass-white: rgba(255,255,255,0.92);
+      --max-width: 1200px;
+      --ease: cubic-bezier(.2,.9,.3,1);
+    }
+
+    /* ========== Base ========== */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:var(--glass-white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    body{
+      background:
+        radial-gradient(800px 400px at 10% 20%, rgba(124,58,237,0.08), transparent 12%),
+        radial-gradient(700px 300px at 90% 80%, rgba(6,182,212,0.06), transparent 10%),
+        linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:36px;
+      gap:20px;
+      min-height:100vh;
+    }
+
+    /* ========== Card ========== */
+    .shell{
+      width:100%;
+      max-width:var(--max-width);
+      border-radius:calc(var(--radius-lg) + 2px);
+      overflow:hidden;
+      box-shadow: 0 20px 60px rgba(3,6,23,0.7);
+      border: 1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      backdrop-filter: blur(8px) saturate(120%);
+      position:relative;
+    }
+
+    /* Subtle animated gradient edge */
+    .shell::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background: linear-gradient(90deg, rgba(124,58,237,0.06), rgba(6,182,212,0.04));
+      mix-blend-mode:overlay;
+      opacity:0.9;
+    }
+
+    header.appbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    }
+
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+
+    /* logo container */
+    .logo-wrap{
+      width:56px;height:56px;border-radius:14px;
+      display:grid;place-items:center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 -2px 6px rgba(0,0,0,0.25);
+      overflow:hidden;
+      transform: translateZ(0);
+    }
+    .logo-wrap img{ width:100%; height:100%; object-fit:cover; display:block;}
+
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      line-height:1;
+    }
+    .brand-title{ font-weight:700; font-size:16px; letter-spacing: -0.2px; color: #fff;}
+    .brand-sub{ font-size:13px; color: rgba(255,255,255,0.78); margin-top:4px; }
+
+    /* actions */
+    .actions{ display:flex; gap:12px; align-items:center; }
+
+    /* Primary button (accent) */
+    .btn {
+      display:inline-flex; align-items:center; gap:10px;
+      border: none; cursor:pointer; user-select:none;
+      padding:10px 14px; font-weight:700; font-size:14px;
+      border-radius:12px; transition:transform .22s var(--ease), box-shadow .22s var(--ease), opacity .12s;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+      will-change: transform;
+    }
+
+    .btn:active{ transform: translateY(1px) scale(.997); }
+
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(124,58,237,0.95), rgba(6,182,212,0.95));
+      color: #021025;
+      padding:11px 16px;
+      border-radius:14px;
+      box-shadow: 0 10px 30px rgba(6,182,212,0.06), 0 6px 18px rgba(124,58,237,0.08);
+    }
+
+    /* White premium button (Copilot studio) */
+    .btn.ghost-white{
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,245,245,0.96));
+      color: #07122a;
+      padding:10px 16px;
+      border-radius:14px;
+      font-weight:700;
+      border: 1px solid rgba(255,255,255,0.85);
+      box-shadow: 0 12px 30px rgba(2,6,23,0.28), 0 2px 8px rgba(0,0,0,0.15);
+      display:inline-flex; align-items:center; gap:10px;
+      transition: transform .22s var(--ease), box-shadow .22s var(--ease), filter .2s;
+      backdrop-filter: blur(6px);
+    }
+    .btn.ghost-white .icon {
+      width:18px; height:18px; display:inline-block; border-radius:6px;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 6px 18px rgba(124,58,237,0.18);
+    }
+
+    .btn.ghost-white:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(2,6,23,0.36), 0 8px 26px rgba(124,58,237,0.05);
+      filter: saturate(1.05);
+    }
+    .btn.ghost-white:active{
+      transform: translateY(-1px);
+    }
+
+    /* ========== Main iframe area ========== */
+    .content{
+      padding:20px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    /* left: big iframe card */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 14px;
+      padding:12px;
+      border: 1px solid rgba(255,255,255,0.02);
+      min-height:420px;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .iframe-shell{
+      background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.24));
+      border-radius:12px;
+      overflow:hidden;
+      flex:1;
+      display:flex;
+      min-height:320px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    iframe.agent{
+      width:100%; height:100%; border:0; display:block;
+    }
+
+    /* loader overlay */
+    .loader-overlay{
+      position:absolute; inset:12px; border-radius:12px;
+      display:grid;place-items:center; pointer-events:none;
+      transition: opacity .35s var(--ease), transform .35s var(--ease);
+    }
+    .loader{
+      display:flex; gap:12px; align-items:center; background: linear-gradient(90deg, rgba(0,0,0,0.28), rgba(255,255,255,0.02));
+      padding:10px 14px; border-radius:999px; border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.45);
+      backdrop-filter: blur(6px);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%; background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      transform-origin:center;
+      animation: pop 1s infinite cubic-bezier(.2,.9,.3,1);
+    }
+    .dot:nth-child(2){ animation-delay: .12s }
+    .dot:nth-child(3){ animation-delay: .24s }
+
+    @keyframes pop{
+      0%{ transform: translateY(0) scale(0.9); opacity:.6;}
+      40%{ transform: translateY(-8px) scale(1.12); opacity:1;}
+      100%{ transform: translateY(0) scale(0.98); opacity:.7;}
+    }
+
+    /* right column: info / controls */
+    .panel{
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .panel .card-mini{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px; padding:14px; border:1px solid rgba(255,255,255,0.02);
+      display:flex;flex-direction:column; gap:8px;
+      min-height:120px;
+    }
+    .panel h4{ margin:0; font-size:13px; color:var(--muted); font-weight:700 }
+    .meta{ font-size:13px; color: rgba(255,255,255,0.78) }
+
+    .chip-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px }
+    .chip{
+      padding:8px 10px; border-radius:999px; font-weight:700; font-size:13px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.22), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.92);
+      display:inline-flex;align-items:center;gap:8px;
+    }
+
+    /* fancy CTA row */
+    .cta-row{ display:flex; gap:12px; align-items:center; margin-top:6px; }
+    .small{
+      font-size:13px; padding:8px 10px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ========== Footer ========== */
+    footer.appfoot{
+      display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid rgba(255,255,255,0.02);
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,0.01));
+      font-size:13px; color: rgba(255,255,255,0.78);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width:980px){
+      .content{ grid-template-columns: 1fr 320px; }
+    }
+    @media (max-width:820px){
+      body{ padding:18px }
+      .content{ grid-template-columns: 1fr; }
+      .panel{ order:2 }
+      .card{ order:1 }
+      .logo-wrap{ width:48px; height:48px; border-radius:12px; }
+    }
+
+    /* accessibility focus */
+    .btn:focus, .small:focus { outline: 3px solid rgba(124,58,237,0.18); outline-offset:4px; border-radius:12px; }
+
+  </style>
+</head>
+<body>
+  <div class="shell" role="region" aria-label="Interfaz del agente embed">
+    <header class="appbar">
+      <div class="brand">
+        <div class="logo-wrap" aria-hidden="true">
+          <img src="logo.png" alt="Logo" loading="eager">
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">Lara — Agente de RRHH</div>
+          <div class="brand-sub">Soporte y consultas internas — Copilot Studio</div>
+        </div>
+      </div>
+
+      <div class="actions" role="toolbar" aria-label="Acciones principales">
+        <button class="btn ghost-white" id="openExternal" title="Abrir en Copilot Studio">
+          <span class="icon" aria-hidden="true"></span>
+          Abrir en Copilot Studio
+        </button>
+
+        <button class="btn primary" id="fullscreenBtn" title="Activar pantalla completa">
+          Pantalla completa
+        </button>
+      </div>
+    </header>
+
+    <main class="content" role="main">
+      <section class="card" aria-label="Ventana principal del agente">
+        <div class="iframe-shell" id="iframeShell">
+          <iframe class="agent" id="agentIframe"
+            src="https://copilotstudio.microsoft.com/environments/Default-385d7f4b-7138-4423-ab1d-350247a932ab/bots/cr4ca_laraAgenteDeRrhh/webchat?__version__=2"
+            title="Copilot Studio Agent Webchat" sandbox="allow-same-origin allow-scripts allow-forms" loading="lazy"></iframe>
+        </div>
+
+        <!-- loader overlay -->
+        <div class="loader-overlay" id="loader" aria-hidden="false">
+          <div class="loader" role="status" aria-live="polite">
+            <div style="display:flex;flex-direction:column;align-items:flex-start">
+              <div style="font-weight:700;color:var(--glass-white);font-size:14px">Cargando agente</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:4px">Esto puede tardar unos segundos la primera vez</div>
+            </div>
+            <div style="width:14px"></div>
+            <div style="display:flex;align-items:center">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="Controles e información">
+        <div class="card-mini" role="region" aria-labelledby="infoTitle">
+          <h4 id="infoTitle">Información rápida</h4>
+          <div class="meta">Haz preguntas al agente sobre RRHH, políticas, vacaciones o procesos internos. Si necesitas más contexto, el agente puede abrir un ticket.</div>
+          <div class="chip-row" aria-hidden="true">
+            <span class="chip">Soporte 24/7</span>
+            <span class="chip">Seguridad corporativa</span>
+            <span class="chip">Integrado con M365</span>
+          </div>
+        </div>
+
+        <div class="card-mini" role="region" aria-labelledby="controlsTitle">
+          <h4 id="controlsTitle">Controles</h4>
+          <div class="cta-row">
+            <button class="small" id="openSeparate">Abrir en pestaña</button>
+            <button class="small" id="reloadBtn">Recargar agente</button>
+          </div>
+
+          <div style="margin-top:10px">
+            <label style="font-size:13px;color:rgba(255,255,255,0.78);display:block;margin-bottom:6px">Preferencia de vista</label>
+            <div style="display:flex;gap:8px">
+              <button class="small" id="compactView">Compacto</button>
+              <button class="small" id="fullView">Normal</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-mini" role="region" aria-labelledby="helpTitle">
+          <h4 id="helpTitle">Notas</h4>
+          <div class="meta">Si algo no carga correctamente, utiliza "Abrir en pestaña" o contacta con administración para revisar permisos de CORS/secure headers.</div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="appfoot">
+      <div>© <strong>Lara</strong> • Copilot Studio Embed</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="font-size:13px;color:rgba(255,255,255,0.7)">Estado: <strong style="color:var(--accent-2)">En línea</strong></div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6)">v1.0</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Elements
+    const iframe = document.getElementById('agentIframe');
+    const loader = document.getElementById('loader');
+    const openExternal = document.getElementById('openExternal');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const openSeparate = document.getElementById('openSeparate');
+    const reloadBtn = document.getElementById('reloadBtn');
+    const compactView = document.getElementById('compactView');
+    const fullView = document.getElementById('fullView');
+
+    // Show loader until iframe fires a load event (with gentle timeout fallback)
+    let loaded = false;
+    const hideLoader = () => {
+      if (loaded) return;
+      loader.style.opacity = '0';
+      loader.style.transform = 'translateY(6px)';
+      loader.setAttribute('aria-hidden','true');
+      setTimeout(()=> loader.style.display = 'none', 420);
+      loaded = true;
+    };
+
+    iframe.addEventListener('load', hideLoader);
+
+    // fallback: if iframe doesn't load in 10s, still hide loader (avoid stuck UI)
+    setTimeout(() => { if (!loaded) hideLoader(); }, 10000);
+
+    // Open in new tab
+    openExternal.addEventListener('click', () => {
+      window.open(iframe.src, '_blank', 'noopener');
+    });
+    openSeparate.addEventListener('click', () => {
+      window.open(iframe.src, '_blank', 'noopener');
+    });
+
+    // Fullscreen toggle for the iframe shell
+    fullscreenBtn.addEventListener('click', async () => {
+      const shell = document.getElementById('iframeShell');
+      try {
+        if (!document.fullscreenElement) {
+          await shell.requestFullscreen();
+          fullscreenBtn.textContent = 'Salir de pantalla';
+        } else {
+          await document.exitFullscreen();
+          fullscreenBtn.textContent = 'Pantalla completa';
+        }
+      } catch (e) {
+        // silent
+      }
+    });
+
+    // Reload iframe
+    reloadBtn.addEventListener('click', () => {
+      loader.style.display = 'grid';
+      loader.style.opacity = '1';
+      loader.setAttribute('aria-hidden','false');
+      iframe.contentWindow.location.reload();
+      // safety hide after a while if reload hangs
+      setTimeout(()=> { if (!loaded) hideLoader(); }, 8000);
+    });
+
+    // Compact / full view toggles (example: adjust iframe height)
+    compactView.addEventListener('click', () => {
+      document.querySelector('.card').style.minHeight = '320px';
+      document.querySelector('.iframe-shell').style.minHeight = '260px';
+    });
+    fullView.addEventListener('click', () => {
+      document.querySelector('.card').style.minHeight = '520px';
+      document.querySelector('.iframe-shell').style.minHeight = '420px';
+    });
+
+    // Accessibility: keyboard shortcut "O" opens external
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'o' && (e.ctrlKey || e.metaKey)) {
+        window.open(iframe.src, '_blank', 'noopener');
+      }
+    });
+  </script>
+</body>
+</html>
